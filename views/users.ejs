@@ -1,0 +1,17 @@
+<!doctype html>
+
+<html>
+  <head>
+    <title> Welcome to <%=forumName%> </title>
+    <link rel="stylesheet"  type="text/css" href="/main.css" />
+  </head>
+  <body>
+    <h1>users at <%=forumName%></h1>
+    <ul> 
+        <!-- loops through the total number of available topics and displays them as a list -->
+        <% for(let i = 0; i < availableUsers.length; i++) { %>
+            <li> <%= availableUsers[i].username %> </li>
+        <% } %>
+    </ul>
+  </body>
+</html>
