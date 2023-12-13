@@ -4,7 +4,7 @@ module.exports = function(app, forumData) {
     app.get('/',function(req,res){
         res.render('index.ejs', forumData)
     });
-    
+
     //-----------------------------------------------------------------------
     app.get('/about',function(req,res){
         res.render('about.ejs', forumData);
@@ -63,5 +63,10 @@ module.exports = function(app, forumData) {
                       + req.body.firstname + req.body.surname + 'Your username is: ' + req.body.username);
           }
         });
+    });
+    
+    //-----------------------------------------------------------------------
+    app.get('/signIn',function(req,res){
+        res.render('signIn.ejs', forumData);
     });
 }
