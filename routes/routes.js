@@ -9,20 +9,41 @@ module.exports = function(app, forumData) {
     app.get('/about',function(req,res){
         res.render('about.ejs', forumData);
     });
-   
+
     //-----------------------------------------------------------------------
-    app.get('/topics', function(req, res) {
-        let sqlquery = "SELECT * FROM topic"; // query database to get all the books
+    app.get('/topicList', function(req, res) {
+        let sqlquery = "SELECT name FROM topic"; // query database to get all the topics
         // execute sql query
         db.query(sqlquery, (err, result) => {
             if (err) {
                 res.redirect('./'); 
             }
 
-            // merge forumData with the {availableTopics:result} object to create a new object newData to be passed to the ejs file
-            let newData = Object.assign({}, forumData, {availableTopics:result});
+            // merge forumData with the {topicList:result} object to create a new object newData to be passed to the ejs file
+            let newData = Object.assign({}, forumData, {topicList:result});
             console.log(newData);
-            res.render("topics.ejs", newData);
+            res.render("topicList.ejs", newData);
+
+         });
+    });
+    
+   
+    //-----------------------------------------------------------------------
+    app.get('/posts/:name', function(req, res) {
+        // query database to get all topics
+        let sqlquery = "SELECT * FROM topic t LEFT JOIN post p ON t.topic_id = p.topic_id LEFT JOIN user u ON p.user_id = u.user_id WHERE t.name = ? ORDER by p.date DESC"; 
+        // execute sql query
+        db.query(sqlquery, [req.params.name], (err, result) => {
+            if (err) {
+                res.redirect('./'); 
+                return console.error(err.message);
+            }
+
+            forumData.topicName = req.params.name;
+            // merge forumData with the {availableTopics:result} object to create a new object newData to be passed to the ejs file
+            let newData = Object.assign({}, forumData, {topics_posts:result});
+            console.log(newData);
+            res.render("posts.ejs", newData);
 
          });
     });

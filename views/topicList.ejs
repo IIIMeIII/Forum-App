@@ -9,8 +9,10 @@
     <h1>Current topics at <%=forumName%></h1>
     <ul> 
         <!-- loops through the total number of available topics and displays them as a list -->
-        <% for(let i = 0; i < availableTopics.length; i++) { %>
-            <li> <%= availableTopics[i].name %> </li>
+        <% for(let i = 0; i < topicList.length; i++) { %>
+            <li> 
+                <a href=/posts/<%= topicList[i].name %>><%=topicList[i].name %> </a>
+            </li>
         <% } %>
     </ul>
   </body>
