@@ -6,14 +6,29 @@
   </head>
   <body>
     <h1>Welcome to the <%=forumName%></h1>
-    <p><a href="about">About <%=forumName%></a></p>
+    <!-- Display username is logged in -->
+    <% if (userData) { %>
+      <h2>Logged in as: <%= userData.name %></h2>
+    <% } %>
+
+    <!-- Only show log out button if logged in -->
+    <% if (userData) { %>
+      <p>
+        <a href="/logout" ><button type="button">Log out</button></a>
+      </p>
+    <% } else { %>
+      <p>
+        <a href="signin" ><button type="button">Sign in</button></a>
+
+        <a href="register" ><button type="button">Register</button></a>
+      </p>
+    <% } %>
+
+    <p><a href="about">About the <%=forumName%></a></p>
     <p><a href="search">Search for posts</a></p>
     <p><a href="topicList">List of topics</a></p>
     <p><a href="addpost">Add new post</a></p>
     <p><a href="users">Existing users</a></p>
     <p><a href="register">Create an account</a></p>
-    <p>
-      <a href="signIn" ><button type="button">Sign in</button></a>
-    </p>
   </body>
 </html>

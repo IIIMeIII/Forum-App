@@ -2,7 +2,13 @@ module.exports = function(app, forumData) {
 
     // Handle our routes
     app.get('/',function(req,res){
-        res.render('index.ejs', forumData)
+        forumData.userData = false;
+        if (req.session.user) {
+            forumData.userData = req.session.user;
+        }
+
+        console.log(forumData.userData);
+        res.render('index.ejs', forumData);
     });
 
     //-----------------------------------------------------------------------
@@ -26,12 +32,15 @@ module.exports = function(app, forumData) {
 
          });
     });
-    
-   
+
     //-----------------------------------------------------------------------
     app.get('/posts/:name', function(req, res) {
-        // query database to get all topics
-        let sqlquery = "SELECT * FROM topic t LEFT JOIN post p ON t.topic_id = p.topic_id LEFT JOIN user u ON p.user_id = u.user_id WHERE t.name = ? ORDER by p.date DESC"; 
+        // query database to get all posts
+        let sqlquery = `SELECT * 
+                        FROM topic t 
+                        LEFT JOIN post p ON t.topic_id = p.topic_id 
+                        LEFT JOIN user u ON p.user_id = u.user_id 
+                        WHERE t.name = ? ORDER BY p.date DESC`; 
         // execute sql query
         db.query(sqlquery, [req.params.name], (err, result) => {
             if (err) {
@@ -40,12 +49,30 @@ module.exports = function(app, forumData) {
             }
 
             forumData.topicName = req.params.name;
-            // merge forumData with the {availableTopics:result} object to create a new object newData to be passed to the ejs file
+            // merge forumData with the {topics_posts:result} object to create a new object newData to be passed to the ejs file
             let newData = Object.assign({}, forumData, {topics_posts:result});
             console.log(newData);
             res.render("posts.ejs", newData);
 
          });
+    });
+
+    //-----------------------------------------------------------------------
+    app.post('/replied', function(req, res) {
+        // insert data into database
+        sqlquery = `INSERT INTO reply (user_id, post_id, content)
+                    VALUES (?,?,?)`;
+        // execute sql query
+        let newrecord = [req.session.user.id, req.body.repliedID, req.body.content];
+        db.query(sqlquery, newrecord, (err, result) => {
+            if (err) {
+                res.redirect('./');
+                return console.error(err.message);
+            }
+            else {
+                res.redirect(`/posts/${req.body.topicname}`);
+            }
+        });
     });
 
     //-----------------------------------------------------------------------
@@ -72,9 +99,9 @@ module.exports = function(app, forumData) {
 
     app.post('/registered', function (req,res) {
         // saving data in database
-        let sqlquery = "INSERT INTO user (firstname, surname, username, email) VALUES (?,?,?,?)";
+        let sqlquery = "INSERT INTO user (firstname, surname, username, email, password) VALUES (?,?,?,?,?)";
         // execute sql query
-        let newrecord = [req.body.firstname, req.body.surname, req.body.username, req.body.email];
+        let newrecord = [req.body.firstname, req.body.surname, req.body.username, req.body.email, req.body.password];
         db.query(sqlquery, newrecord, (err, result) => {
           if (err) {
             return console.error(err.message);
@@ -87,7 +114,38 @@ module.exports = function(app, forumData) {
     });
     
     //-----------------------------------------------------------------------
-    app.get('/signIn',function(req,res){
-        res.render('signIn.ejs', forumData);
+    app.get('/signin',function(req,res){
+        res.render('signin.ejs', forumData);
+    });
+
+    app.post('/signedin', function (req,res) {
+        // query data base for information matching user input
+        let sqlquery = `SELECT user.username, user.user_id
+                        FROM user
+                        WHERE user.username = ?
+                        AND user.password = ?`;
+        // execute sql query
+        let newrecord = [req.body.username, req.body.password];
+        db.query(sqlquery, newrecord, (err, result) => {
+          if (err) {
+            return console.error(err.message);
+          } 
+          // if there is no match then user is returned to home page
+          else if (result.length == 0) {
+            res.redirect('./');
+            return;
+          }
+          
+        req.session.user = {id: result[0].user_id, name: result[0].username};
+        req.session.save();
+        console.log(req.session.user);
+          
+        res.redirect('./');
+        });
+
+        app.get('/logout', function(req, res) {
+            req.session.destroy();
+            res.redirect('./');
+        });
     });
 }

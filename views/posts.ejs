@@ -8,7 +8,7 @@
   <body>
     <h1>Current posts on <%=topicName%></h1>
     <ul> 
-        <!-- loops through the total number of available topics and displays them as a list -->
+        <!-- loops through the total number of available posts and displays them as a list -->
         <% for(let i = 0; i < topics_posts.length; i++) { %>
           <% post = topics_posts[i]; %>
           
@@ -22,9 +22,25 @@
                 <%= post.username %> 
               </p>
 
-              <p>Date:
+              <p>Date posted:
                 <%= post.date %> 
               </p>
+              
+              <!-- Only shows button if user is logged in -->
+              <% if (userData) { %>
+                <form method="POST" action="/replied">
+                  <p>Reply to post:</p>
+                  <textarea id="text" type="text" name="content" maxlength="999" rows="10" cols="80"></textarea>
+                  <input type="hidden" name="repliedID" value=<%= post.post_id %>>
+                  <input type="hidden" name="topicname" value=<%= topicName %>>
+
+                  <p>
+                    <input type="submit" value="Reply" />
+                  </p>
+                </form>
+                
+              <% } %>
+              
             </li>
         <% } %>
     </ul>
