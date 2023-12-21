@@ -41,3 +41,13 @@ a:link {
     text-decoration: none;
     padding:5px;
   }
+
+  #postlistlink {
+    color: rgb(224, 149, 177);
+  }
+
+  #replies {
+    color: rgb(141, 43, 79);
+    text-decoration: underline;
+    font-weight: bold;
+  }

@@ -35,24 +35,73 @@ module.exports = function(app, forumData) {
 
     //-----------------------------------------------------------------------
     app.get('/posts/:name', function(req, res) {
+        forumData.userData = false;
+        if (req.session.user) {
+            forumData.userData = req.session.user;
+        }
         // query database to get all posts
-        let sqlquery = `SELECT * 
+        let sqlquery = `SELECT t.topic_id, p.post_id, p.title, p.content, u.username, p.date
                         FROM topic t 
-                        LEFT JOIN post p ON t.topic_id = p.topic_id 
-                        LEFT JOIN user u ON p.user_id = u.user_id 
-                        WHERE t.name = ? ORDER BY p.date DESC`; 
+                        LEFT JOIN post p 
+                        ON t.topic_id = p.topic_id 
+                        LEFT JOIN user u 
+                        ON p.user_id = u.user_id 
+                        WHERE t.name = ? 
+                        ORDER BY p.date DESC`; 
         // execute sql query
         db.query(sqlquery, [req.params.name], (err, result) => {
             if (err) {
                 res.redirect('./'); 
                 return console.error(err.message);
             }
-
-            forumData.topicName = req.params.name;
             // merge forumData with the {topics_posts:result} object to create a new object newData to be passed to the ejs file
             let newData = Object.assign({}, forumData, {topics_posts:result});
+            sqlquery = `SELECT r.content, r.date, r.user_id, r.reply_id, r.post_id, u.username
+                        from user u
+                        LEFT JOIN reply r
+                        ON u.user_id = r.user_id`;
+            db.query(sqlquery, (err, result) => {
+                if (err) {
+                    res.redirect('./');
+                    return console.error(err.message);
+                }
+                // merge forumData with the {replies:result} object to create a new object newData to be passed to the ejs file
+                newData = Object.assign({}, newData, {replies:result});
+                
+                console.log(result);
+                newData.replies = result;
+                newData.topicName = req.params.name;
+                console.log(newData);
+                res.render("posts.ejs", newData);
+            });
+         });
+    });
+
+    app.get('/postlist', function(req, res) {
+        forumData.userData = false;
+        if (req.session.user) {
+            forumData.userData = req.session.user;
+        }
+        // query database to get all posts
+        let sqlquery = `SELECT t.name, p.post_id, p.title, p.content, p.date, u.username
+                        FROM post p
+                        LEFT JOIN topic t
+                        ON t.topic_id = p.topic_id
+                        LEFT JOIN user u
+                        ON p.user_id = u.user_id
+                        LEFT JOIN  reply r
+                        ON p.post_id = r.post_id`; 
+        // execute sql query
+        db.query(sqlquery, [req.params.id], (err, result) => {
+            if (err) {
+                res.redirect('./'); 
+                return console.error(err.message);
+            }
+
+            // merge forumData with the {topics_posts:result} object to create a new object newData to be passed to the ejs file
+            let newData = Object.assign({}, forumData, {postList:result});
             console.log(newData);
-            res.render("posts.ejs", newData);
+            res.render("postList.ejs", newData);
 
          });
     });

@@ -10,7 +10,7 @@
     <ul> 
         <!-- loops through the total number of available posts and displays them as a list -->
         <% for(let i = 0; i < topics_posts.length; i++) { %>
-          <% post = topics_posts[i]; %>
+          <% let post = topics_posts[i]; %>
           
             <li>
               <h2><%= post.title %></h2>
@@ -25,7 +25,22 @@
               <p>Date posted:
                 <%= post.date %> 
               </p>
-              
+
+              <p id="replies">Replies:</p>
+              <% for (let j = 0; j < replies.length; j++) { %>
+                <% if (post.post_id == replies[j].post_id) { %>
+                  <p><%= replies[j].content %></p>
+
+                  <p>Posted by:
+                    <%= replies[j].username %>
+                  </p>
+
+                  <p>Date posted:
+                    <%= replies[j].date %>
+                  </p>
+                <% } %>
+              <% } %>
+
               <!-- Only shows button if user is logged in -->
               <% if (userData) { %>
                 <form method="POST" action="/replied">
