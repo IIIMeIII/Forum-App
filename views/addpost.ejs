@@ -1,0 +1,35 @@
+<!doctype html>
+
+<html>
+    <head>
+        <title>Post on the <%=forumName%> </title>
+        <link rel="stylesheet"  type="text/css" href="/main.css" />
+    </head>
+
+    <body>
+        <h1>Post on the <%=forumName%></h1>
+        <h2>What are you posting about today?</h2>
+        
+        <form method="POST" action="/postadded">
+            <label for="topic">Select a topic</label>
+            <select id="topic" name="topic"> 
+
+            <!-- loops though all topic the user is a part of-->
+                <% for( let i = 0; i < userData.topics.length; i++ ) { %>
+                    <!-- displays available topics as a drop down list -->
+                    <option value=<%= topics[i].name %>><%= topics[i].name %></option>
+                <% } %>
+            </select>
+            
+            <p>Title:</p>
+            <input id="title" type="text" name="title" size="50" /> 
+
+            <p>Content:</p>
+            <textarea id="content" type="text" name="content" maxlength="999" rows="10" cols="80"></textarea>
+
+            <p>
+                <input type="submit" value="Post" />
+            </p> 
+        </form>
+    </body>
+</html>

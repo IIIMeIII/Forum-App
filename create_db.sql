@@ -1,3 +1,7 @@
+--
+-- Table structure for table `participant`
+--
+
 DROP TABLE IF EXISTS `participant`;
 
 CREATE TABLE `participant` (
@@ -9,13 +13,17 @@ CREATE TABLE `participant` (
   CONSTRAINT `FK_participant_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
 )
 
+--
+-- Table structure for table `post`
+--
+
 DROP TABLE IF EXISTS `post`;
 
 CREATE TABLE `post` (
   `post_id` int NOT NULL AUTO_INCREMENT,
   `title` varchar(45) NOT NULL,
   `content` varchar(999) NOT NULL DEFAULT '"empty"',
-  `date` datetime NOT NULL,
+  `date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `user_id` int NOT NULL,
   `topic_id` int NOT NULL,
   PRIMARY KEY (`post_id`),
@@ -24,6 +32,10 @@ CREATE TABLE `post` (
   CONSTRAINT `FK_post_topic` FOREIGN KEY (`topic_id`) REFERENCES `topic` (`topic_id`),
   CONSTRAINT `FK_post_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
 ) 
+
+--
+-- Table structure for table `reply`
+--
 
 DROP TABLE IF EXISTS `reply`;
 
@@ -40,6 +52,10 @@ CREATE TABLE `reply` (
   CONSTRAINT `FK_reply_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
 ) 
 
+--
+-- Table structure for table `topic`
+--
+
 DROP TABLE IF EXISTS `topic`;
 
 CREATE TABLE `topic` (
@@ -48,6 +64,10 @@ CREATE TABLE `topic` (
   PRIMARY KEY (`topic_id`),
   UNIQUE KEY `name_UNIQUE` (`name`)
 ) 
+
+--
+-- Table structure for table `user`
+--
 
 DROP TABLE IF EXISTS `user`;
 
@@ -60,4 +80,4 @@ CREATE TABLE `user` (
   `password` varchar(45) NOT NULL,
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `username_UNIQUE` (`username`)
-)
+) 

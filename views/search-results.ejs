@@ -1,0 +1,31 @@
+<!doctype html>
+
+<html>
+  <head>
+    <title> Search <%=forumName%> </title>
+    <link rel="stylesheet"  type="text/css" href="/main.css" />
+  </head>
+  <body>
+    <h1><%=forumName%> Search Results: </h1>
+    <ul> 
+        <!-- loops through the total number of available posts and displays them as a list -->
+        <% for(let i = 0; i < availablePosts.length; i++) { %>
+            <li> 
+                <h2><%= availablePosts[i].title %></h2>
+
+                <p>
+                    <%= availablePosts[i].content %>
+                </p>
+
+                <p>Posted by:
+                    <%= availablePosts[i].username %>
+                </p>
+
+                <p>Date posted:
+                    <%= availablePosts[i].date %>
+                </p>
+            </li>
+        <% } %>
+    </ul>
+  </body>
+</html>

@@ -9,9 +9,32 @@
     <h1>Current topics at <%=forumName%></h1>
     <ul> 
         <!-- loops through the total number of available topics and displays them as a list -->
-        <% for(let i = 0; i < topicList.length; i++) { %>
+        <% for (let i = 0; i < topicList.length; i++) { %>
+          <% let topic = topicList[i]; %> 
             <li> 
-                <a href=/posts/<%= topicList[i].name %>><%=topicList[i].name %> </a>
+                <a href=/posts/<%= topic.name %>><%= topic.name %> </a>
+
+                <% if (userData) { %>
+                  <% let isJoined = false; %>
+
+                  <% for ( let j = 0; j < userData.topics.length; j++ ) { %>
+                    <% if (userData.topics[j].topic_id == topic.topic_id) { %>
+                      <% isJoined = true; %>
+                      <form method="POST" action="/leavetopic">
+                          <input id="topicleftid" type="hidden" name="topicid" value=<%= topic.topic_id %>>
+                          <input  type="submit" value="Leave topic" />
+                      </form>
+                      <% break; %>
+                    <% } %>
+                  <% } %>
+
+                  <% if (!isJoined) { %>
+                    <form method="POST" action="/jointopic">
+                      <input id="topicjoinedid" type="hidden" name="topicid" value=<%= topic.topic_id %>>
+                      <input type="submit" value="Join topic" />
+                    </form>
+                  <% } %>
+                <% } %>
             </li>
         <% } %>
     </ul>
