@@ -164,7 +164,7 @@ module.exports = function(app, forumData) {
                     res.redirect('./');
                     return console.error(err.message);
                 }
-                res.redirect(`/posts/${req.body.topic}`)
+                res.redirect(`http://www.doc.gold.ac.uk/usr/136/posts/${req.body.topic}`)
             });
         });   
     })
@@ -273,7 +273,7 @@ module.exports = function(app, forumData) {
                 return console.error(err.message);
             }
             else {
-                res.redirect(`/posts/${req.body.topicname}`);
+                res.redirect(`http://www.doc.gold.ac.uk/usr/136/posts/${req.body.topicname}`);
             }
         });
     });
